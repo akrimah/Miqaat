@@ -1,6 +1,4 @@
-# SSL certificates for macOS python.org installs
 certifi
-
-# Future phases may add:
-#   icalendar
-#   google-api-python-client
+fastapi
+icalendar
+uvicorn[standard]

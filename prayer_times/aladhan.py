@@ -36,6 +36,21 @@ class AladhanError(Exception):
     """Raised when the Aladhan API returns an error or unexpected payload."""
 
 
+def fetch_methods() -> list[dict[str, str | int]]:
+    """Return available prayer calculation methods from Aladhan."""
+    payload = _get_json("/methods", {})
+    raw = payload["data"]
+    entries = raw.items() if isinstance(raw, dict) else ((str(i), e) for i, e in enumerate(raw))
+    return sorted(
+        [
+            {"id": int(entry["id"]), "name": entry.get("name", key)}
+            for key, entry in entries
+            if isinstance(entry, dict) and "id" in entry
+        ],
+        key=lambda m: m["id"],
+    )
+
+
 def fetch_prayer_times(
     location: Location,
     start: date,

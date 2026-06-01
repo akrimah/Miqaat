@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prayer Times</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>Prayer Times</h1>
+      <p class="subtitle">Prayer times for your trip</p>
+    </header>
+
+    <div id="error" class="error hidden" role="alert"></div>
+
+    <form id="form" class="form">
+      <fieldset class="field-group">
+        <legend class="label">Location</legend>
+        <div class="segmented" role="tablist">
+          <button type="button" class="segment active" data-mode="city" role="tab" aria-selected="true">City</button>
+          <button type="button" class="segment" data-mode="location" role="tab" aria-selected="false">My location</button>
+        </div>
+
+        <div id="city-fields" class="location-panel">
+          <label class="field">
+            <span class="label">City</span>
+            <input type="text" id="city" name="city" placeholder="London" autocomplete="address-level2">
+          </label>
+          <label class="field">
+            <span class="label">Country</span>
+            <input type="text" id="country" name="country" placeholder="UK" autocomplete="country-name">
+          </label>
+        </div>
+
+        <div id="location-fields" class="location-panel hidden">
+          <button type="button" id="detect-location" class="btn-secondary">
+            Use my current location
+          </button>
+          <p id="coords-label" class="coords-label hidden"></p>
+        </div>
+      </fieldset>
+
+      <div class="field-row">
+        <label class="field">
+          <span class="label">From</span>
+          <input type="date" id="start" name="start" required>
+        </label>
+        <label class="field">
+          <span class="label">To</span>
+          <input type="date" id="end" name="end" required>
+        </label>
+      </div>
+
+      <details class="settings">
+        <summary>Settings</summary>
+        <div class="settings-body">
+          <label class="field">
+            <span class="label">Calculation method</span>
+            <select id="method" name="method">
+              <option value="2">Loading…</option>
+            </select>
+          </label>
+          <fieldset class="field">
+            <span class="label">Asr calculation</span>
+            <div class="radio-row">
+              <label class="radio">
+                <input type="radio" name="school" value="0" checked>
+                Shafi
+              </label>
+              <label class="radio">
+                <input type="radio" name="school" value="1">
+                Hanafi
+              </label>
+            </div>
+          </fieldset>
+        </div>
+      </details>
+
+      <button type="submit" id="submit" class="btn-primary">
+        <span id="submit-text">Get prayer times</span>
+        <span id="submit-spinner" class="spinner hidden" aria-hidden="true"></span>
+      </button>
+    </form>
+
+    <section id="results" class="results hidden" aria-live="polite">
+      <div class="results-header">
+        <h2 id="results-title"></h2>
+        <p id="results-meta" class="results-meta"></p>
+      </div>
+      <div id="today-card" class="today-card hidden"></div>
+      <div id="days-list" class="days-list"></div>
+      <button type="button" id="download-ics" class="btn-secondary btn-download">
+        Download .ics calendar
+      </button>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

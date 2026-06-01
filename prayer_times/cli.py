@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from datetime import date
 
 from prayer_times.aladhan import AladhanError, fetch_prayer_times
 from prayer_times.models import LocationByCity, LocationByCoords
+from prayer_times.serialize import result_to_json
 
 
 def _parse_date(value: str) -> date:
@@ -68,26 +68,6 @@ def _format_table(result) -> str:
     return "\n".join(lines).lstrip()
 
 
-def _format_json(result) -> str:
-    payload = {
-        "location": result.location.__dict__,
-        "method": result.method,
-        "school": result.school,
-        "days": [
-            {
-                "date": day.date.isoformat(),
-                "timezone": day.timezone,
-                "prayers": [
-                    {"name": p.name, "time": p.time.strftime("%H:%M")}
-                    for p in day.prayers
-                ],
-            }
-            for day in result.days
-        ],
-    }
-    return json.dumps(payload, indent=2)
-
-
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -105,7 +85,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
 
-    output = _format_json(result) if args.json else _format_table(result)
+    output = result_to_json(result) if args.json else _format_table(result)
     print(output)
     return 0
 
