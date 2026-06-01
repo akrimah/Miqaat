@@ -27,6 +27,7 @@ from prayer_times.models import (
 )
 
 BASE_URL = "https://api.aladhan.com/v1"
+USER_AGENT = "Miqaat/1.0 (+https://github.com/akrimah/Miqaat)"
 
 # Strip trailing timezone label, e.g. "05:12 (BST)" -> "05:12"
 _TIME_RE = re.compile(r"^(\d{1,2}:\d{2})")
@@ -124,11 +125,27 @@ def _ssl_context() -> ssl.SSLContext | None:
     return ssl.create_default_context(cafile=certifi.where())
 
 
+def _build_opener() -> urllib.request.OpenerDirector:
+    """Direct HTTPS opener — bypasses HTTP_PROXY env vars that block Aladhan."""
+    handlers: list[urllib.request.BaseHandler] = [urllib.request.ProxyHandler({})]
+    ctx = _ssl_context()
+    if ctx is not None:
+        handlers.append(urllib.request.HTTPSHandler(context=ctx))
+    return urllib.request.build_opener(*handlers)
+
+
+_OPENER = _build_opener()
+
+
 def _get_json(path: str, params: dict[str, str | float]) -> dict[str, Any]:
     query = urllib.parse.urlencode(params)
     url = f"{BASE_URL}{path}?{query}"
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
+    )
     try:
-        with urllib.request.urlopen(url, timeout=30, context=_ssl_context()) as response:
+        with _OPENER.open(request, timeout=30) as response:
             payload = json.loads(response.read().decode())
     except urllib.error.URLError as exc:
         raise AladhanError(f"Network error calling Aladhan API: {exc}") from exc
