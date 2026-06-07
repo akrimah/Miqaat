@@ -346,6 +346,58 @@ select:focus {
   margin-top: 1.5rem;
 }
 
+.app-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.85rem 1.25rem 0;
+}
+
+.app-nav-logo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.app-nav-logo:hover {
+  color: var(--accent-hover);
+}
+
+.app-nav-link {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.app-nav-link:hover {
+  color: var(--accent);
+}
+
+.app-footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1.25rem 2.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.app-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  color: var(--accent);
+}
+
+.app-footer span {
+  margin: 0 0.35rem;
+  color: var(--border);
+}
+
 @media (max-width: 400px) {
   .prayer-grid {
     grid-template-columns: repeat(3, 1fr);

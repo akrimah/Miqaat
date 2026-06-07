@@ -3,14 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prayer Times</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta name="description" content="Get accurate prayer times by city or location. Export to your calendar.">
+  <title>Prayer Times — Miqaat</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/app/static/style.css">
 </head>
 <body>
+  <nav class="app-nav">
+    <a href="/" class="app-nav-logo">← Miqaat</a>
+    <a href="/faq" class="app-nav-link">Help</a>
+  </nav>
+
   <main class="container">
     <header class="header">
       <h1>Prayer Times</h1>
-      <p class="subtitle">Prayer times for your trip</p>
+      <p class="subtitle">Accurate times for your location and dates</p>
     </header>
 
     <div id="error" class="error hidden" role="alert"></div>
@@ -97,6 +104,12 @@
     </section>
   </main>
 
-  <script src="/static/app.js"></script>
+  <footer class="app-footer">
+    <a href="/privacy">Privacy</a>
+    <span aria-hidden="true">·</span>
+    <a href="/terms">Terms</a>
+  </footer>
+
+  <script src="/app/static/app.js"></script>
 </body>
 </html>

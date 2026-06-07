@@ -1,64 +1,44 @@
-# Prayer Times Calendar
+# Miqaat
 
-Generate calendar events for the five daily prayers using the [Aladhan API](https://aladhan.com/prayer-times-api).
-
-Includes a **web UI** (FastAPI + vanilla HTML/CSS/JS) and a **CLI** for scripting.
+Prayer times for home, work, and travel. Built with Python (FastAPI) and a vanilla HTML/CSS/JS frontend.
 
 ## Setup
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-(`certifi` fixes SSL certificate verification on macOS python.org installs.)
-
-## Web app (local)
+## Run locally
 
 ```bash
 uvicorn prayer_times.server:app --reload
 ```
 
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Website:** http://127.0.0.1:8000
+- **Prayer app:** http://127.0.0.1:8000/app
 
-Features:
+## Project structure
 
-- City or GPS location
-- Date range (up to 90 days)
-- Calculation method and Asr school settings
-- Prayer times display with a highlighted “Today” card
-- Download `.ics` for Google Calendar, Apple Calendar, etc.
+```
+prayer_times/     # Core API + business logic (protected for mobile reuse)
+web/
+  marketing/      # Public website (home, FAQ, about, legal pages)
+  app/            # Prayer times tool UI
+docs/API.md       # API contract for future Flutter apps
+mobile/           # Placeholder for future iOS/Android apps
+```
 
 ## CLI
-
-By city:
 
 ```bash
 python3 -m prayer_times --city London --country UK --from 2026-06-01 --to 2026-06-07
 ```
 
-By coordinates:
+## Deploy (Render)
 
-```bash
-python3 -m prayer_times --lat 51.5074 --lon -0.1278 --from 2026-06-01 --to 2026-06-07
-```
+Connect the GitHub repo to [Render](https://render.com). See [`render.yaml`](render.yaml).
 
-Optional flags: `--method 2`, `--school 0`, `--json`.
-
-## Project structure
-
-```
-prayer_times/
-  aladhan.py    # Aladhan API client
-  models.py     # Data types
-  serialize.py  # JSON output (shared by CLI + API)
-  ics.py        # .ics calendar export
-  server.py     # FastAPI web server
-  cli.py        # Command-line interface
-web/
-  index.html
-  static/style.css
-  static/app.js
-```
-
+Build: `pip install -r requirements.txt`  
+Start: `uvicorn prayer_times.server:app --host 0.0.0.0 --port $PORT`
