@@ -177,37 +177,86 @@ function renderResults(data) {
   resultsEl.classList.remove("hidden");
 }
 
-detectBtn.addEventListener("click", () => {
+function isSecureContext() {
+  return window.isSecureContext || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+}
+
+function getPosition(options) {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+  });
+}
+
+/** Try cached/low-accuracy first, then a fresh fix with a longer timeout. */
+async function detectCurrentPosition() {
+  // Cached position (up to 10 min) — often instant on repeat visits
+  try {
+    return await getPosition({
+      enableHighAccuracy: false,
+      maximumAge: 600_000,
+      timeout: 20_000,
+    });
+  } catch (err) {
+    if (err.code !== 3) throw err; // not a timeout — pass through
+  }
+
+  // Fresh network/Wi‑Fi fix — longer wait for desktop and indoor use
+  try {
+    return await getPosition({
+      enableHighAccuracy: false,
+      maximumAge: 0,
+      timeout: 45_000,
+    });
+  } catch (err) {
+    if (err.code !== 3) throw err;
+  }
+
+  // Last resort: GPS (slower indoors but can succeed when network location fails)
+  return getPosition({
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 45_000,
+  });
+}
+
+function geolocationErrorMessage(err) {
+  const messages = {
+    1: "Location permission denied. Allow location access in your browser settings, or enter a city instead.",
+    2: "Location unavailable. Try again or enter a city and country.",
+    3: "Location took too long. Move near a window, check Wi‑Fi is on, or enter a city instead.",
+  };
+  return messages[err.code] || "Could not get your location. Try entering a city instead.";
+}
+
+detectBtn.addEventListener("click", async () => {
   hideError();
   if (!navigator.geolocation) {
     showError("Geolocation is not supported by your browser");
     return;
   }
+  if (!isSecureContext()) {
+    showError("Location requires HTTPS. Use city search, or open this site over a secure connection.");
+    return;
+  }
 
   detectBtn.disabled = true;
   detectBtn.textContent = "Detecting…";
+  coordsLabel.textContent = "Finding your location — can take up to a minute indoors";
+  coordsLabel.classList.remove("hidden");
 
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      coordsLabel.textContent = `Using ${coords.lat.toFixed(4)}, ${coords.lon.toFixed(4)}`;
-      coordsLabel.classList.remove("hidden");
-      detectBtn.textContent = "Update location";
-      detectBtn.disabled = false;
-      setMode("location");
-    },
-    (err) => {
-      detectBtn.disabled = false;
-      detectBtn.textContent = "Use my current location";
-      const messages = {
-        1: "Location permission denied",
-        2: "Location unavailable",
-        3: "Location request timed out",
-      };
-      showError(messages[err.code] || "Could not get your location");
-    },
-    { enableHighAccuracy: false, timeout: 10000 }
-  );
+  try {
+    const pos = await detectCurrentPosition();
+    coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    coordsLabel.textContent = `Using ${coords.lat.toFixed(4)}, ${coords.lon.toFixed(4)}`;
+    detectBtn.textContent = "Update location";
+    setMode("location");
+  } catch (err) {
+    coordsLabel.classList.add("hidden");
+    detectBtn.textContent = "Use my current location";
+    showError(geolocationErrorMessage(err));
+  } finally {
+    detectBtn.disabled = false;
+  }
 });
 
 form.addEventListener("submit", async (e) => {
