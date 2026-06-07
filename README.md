@@ -23,6 +23,7 @@ uvicorn prayer_times.server:app --reload
 Open [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 Features:
+
 - City or GPS location
 - Date range (up to 90 days)
 - Calculation method and Asr school settings
@@ -45,22 +46,6 @@ python3 -m prayer_times --lat 51.5074 --lon -0.1278 --from 2026-06-01 --to 2026-
 
 Optional flags: `--method 2`, `--school 0`, `--json`.
 
-## Deploy (Render)
-
-1. Push this repo to GitHub.
-2. Create a [Render](https://render.com) account → **New Web Service** → connect the repo.
-3. Render auto-detects `render.yaml`, or set manually:
-   - **Build command:** `pip install -r requirements.txt`
-   - **Start command:** `uvicorn prayer_times.server:app --host 0.0.0.0 --port $PORT`
-4. Deploy. HTTPS is enabled automatically (required for browser geolocation).
-
-Alternatively, build and run with Docker:
-
-```bash
-docker build -t prayer-times .
-docker run -p 8000:8000 prayer-times
-```
-
 ## Project structure
 
 ```
@@ -76,3 +61,4 @@ web/
   static/style.css
   static/app.js
 ```
+
