@@ -6,6 +6,9 @@ __pycache__/
 dist/
 build/
 
+# Local-only docs (not for public repo)
+docs/deploy.md
+
 # Virtual environment
 .venv/
 venv/
